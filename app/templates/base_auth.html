@@ -1,0 +1,45 @@
+{% from "_icons.html" import icon %}
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}SafeURL{% endblock %} · SafeURL</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+</head>
+<body>
+  <div class="auth-card">
+    <aside class="auth-side">
+      <div class="brand">
+        <span class="brand-ico">{{ icon('shield-check', 34) }}</span>
+        SafeURL
+      </div>
+      <svg width="150" height="130" viewBox="0 0 150 130" fill="none" aria-hidden="true">
+        <rect x="15" y="25" width="120" height="75" rx="8" fill="#2f356b" stroke="#818cf8" stroke-width="2"/>
+        <rect x="5" y="104" width="140" height="8" rx="4" fill="#3b4285"/>
+        <path d="M75 38l22 8v15c0 14-9 25-22 30-13-5-22-16-22-30V46l22-8z" fill="#4f46e5" stroke="#a5b4fc" stroke-width="2"/>
+        <path d="M65 64l7 7 13-14" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <h1>Détection intelligente<br>du phishing par l'IA</h1>
+      <p>Analysez vos liens, protégez vos données.</p>
+    </aside>
+
+    <main class="auth-main">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+          <div class="flash {{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endwith %}
+      {% block form %}{% endblock %}
+    </main>
+  </div>
+
+  <script>
+    function togglePwd(id, btn) {
+      var el = document.getElementById(id);
+      el.type = el.type === "password" ? "text" : "password";
+      btn.classList.toggle("shown");
+    }
+  </script>
+</body>
+</html>

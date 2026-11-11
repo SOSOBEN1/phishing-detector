@@ -1,0 +1,48 @@
+{% from "_icons.html" import icon %}
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}SafeURL{% endblock %} · SafeURL</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+</head>
+<body class="app">
+  <aside class="sidebar">
+    <div class="logo">
+      {{ icon('shield-check', 30) }}
+      SafeURL
+    </div>
+    <nav>
+      <a class="nav {{ 'active' if request.endpoint == 'main.dashboard' }}" href="{{ url_for('main.dashboard') }}">{{ icon('home') }} Tableau de bord</a>
+      <a class="nav {{ 'active' if request.endpoint in ('main.analyze', 'main.analysis_detail') }}" href="{{ url_for('main.analyze') }}">{{ icon('search') }} Analyser une URL</a>
+      <a class="nav {{ 'active' if request.endpoint == 'main.history' }}" href="{{ url_for('main.history') }}">{{ icon('list') }} Mes analyses</a>
+    </nav>
+    <div class="side-bottom">
+      <a class="nav" href="#" title="Bientôt disponible">{{ icon('settings') }} Paramètres</a>
+      <form method="post" action="{{ url_for('auth.logout') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit" class="nav nav-btn">{{ icon('logout') }} Déconnexion</button>
+      </form>
+    </div>
+  </aside>
+
+  <div class="content">
+    <header class="topbar">
+      <div>{% block header %}{% endblock %}</div>
+      <div class="user">
+        <span class="avatar">{{ current_user.name[0]|upper }}</span>
+        {{ current_user.name }}
+      </div>
+    </header>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}
+        <div class="flash {{ category }}">{{ message }}</div>
+      {% endfor %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+  </div>
+</body>
+</html>

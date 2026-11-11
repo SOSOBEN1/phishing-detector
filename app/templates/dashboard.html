@@ -1,0 +1,49 @@
+{% extends "base_app.html" %}
+{% from "_icons.html" import icon %}
+{% block title %}Tableau de bord{% endblock %}
+{% block header %}
+  <h1>Bonjour {{ current_user.name }}</h1>
+  <p class="sub">Voici un aperçu de votre activité sur SafeURL.</p>
+{% endblock %}
+
+{% block content %}
+<section class="stats">
+  <div class="card stat">
+    <span class="ico ico-purple">{{ icon('link', 20) }}</span>
+    <div><strong>{{ total }}</strong><small>Analyses totales</small></div>
+  </div>
+  <div class="card stat">
+    <span class="ico ico-green">{{ icon('shield-check', 20) }}</span>
+    <div><strong>{{ safe }}</strong><small>URL sûres</small></div>
+  </div>
+  <div class="card stat">
+    <span class="ico ico-red">{{ icon('alert', 20) }}</span>
+    <div><strong>{{ phishing }}</strong><small>URLs suspectes</small></div>
+  </div>
+</section>
+
+<section class="grid-2">
+  <div class="card">
+    <h3>Analyser une URL</h3>
+    <p class="muted">Vérifiez si un lien est légitime ou potentiellement dangereux.</p>
+    <form method="post" action="{{ url_for('main.analyze') }}" novalidate>
+      {{ form.hidden_tag() }}
+      {{ form.url(class="input", placeholder="https://exemple.com", autocomplete="off") }}
+      <button type="submit" class="btn">{{ icon('search', 16) }} Analyser l'URL</button>
+    </form>
+  </div>
+  <div class="card promo">
+    <div class="promo-ico">{{ icon('shield-check', 24) }}</div>
+    <strong>Une URL suspecte ?<br>Ne cliquez pas !</strong>
+    <small>Laissez notre IA l'analyser pour vous.</small>
+  </div>
+</section>
+
+<section class="card">
+  <div class="card-head">
+    <h3>Dernières analyses</h3>
+    <a class="link" href="{{ url_for('main.history') }}">Voir tout →</a>
+  </div>
+  {% include "_analyses_table.html" %}
+</section>
+{% endblock %}

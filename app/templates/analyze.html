@@ -1,0 +1,53 @@
+{% extends "base_app.html" %}
+{% from "_icons.html" import icon %}
+{% block title %}Analyser une URL{% endblock %}
+{% block header %}<h1>Analyse d'une URL</h1>{% endblock %}
+
+{% block content %}
+<form method="post" action="{{ url_for('main.analyze') }}" class="analyze-bar" novalidate>
+  {{ form.hidden_tag() }}
+  {{ form.url(class="input", placeholder="https://exemple.com", autocomplete="off") }}
+  <button type="submit" class="btn">{{ icon('search', 16) }} Analyser l'URL</button>
+</form>
+{% for e in form.url.errors %}<p class="err">{{ e }}</p>{% endfor %}
+
+{% if analysis %}
+<section class="result {{ 'danger' if is_phishing else 'safe' }}">
+  <div class="result-head">
+    <div class="r-icon">{{ icon('shield-alert' if is_phishing else 'shield-check', 28) }}</div>
+    <div class="r-title">
+      <h3>{{ 'URL potentiellement dangereuse' if is_phishing else 'URL probablement sûre' }}</h3>
+      <p>{{ 'Notre IA a détecté des signes de phishing dans cette URL.' if is_phishing else 'Notre IA n\'a pas détecté de signe de phishing.' }}</p>
+    </div>
+    <div class="gauge">
+      <small>Score de risque</small>
+      <svg width="76" height="76" viewBox="0 0 64 64" aria-label="Score de risque {{ score }} sur 100">
+        <circle cx="32" cy="32" r="26" fill="none" stroke="#e5e7eb" stroke-width="6"/>
+        <circle cx="32" cy="32" r="26" fill="none" stroke="currentColor" stroke-width="6"
+                stroke-linecap="round" stroke-dasharray="163.4"
+                stroke-dashoffset="{{ (163.4 * (1 - score / 100))|round(1) }}"
+                transform="rotate(-90 32 32)"/>
+        <text x="32" y="36" text-anchor="middle" font-size="12" font-weight="700" fill="currentColor">{{ score }}/100</text>
+      </svg>
+    </div>
+  </div>
+
+  <div class="result-body">
+    <p class="analyzed-url">{{ analysis.url }}</p>
+    <h4>Détails de l'analyse</h4>
+    <ul class="reasons">
+      {% for r in reasons %}
+        <li><span class="dot">{{ icon('alert', 11) }}</span>{{ r }}</li>
+      {% else %}
+        <li class="ok"><span class="dot">{{ icon('check', 11) }}</span>Aucun signe suspect détecté dans le nom de domaine.</li>
+      {% endfor %}
+    </ul>
+    {% if is_phishing %}
+      <div class="alert bad">{{ icon('alert', 18) }}<span>Ne cliquez pas sur ce lien et ne saisissez aucune information personnelle.</span></div>
+    {% else %}
+      <div class="alert neutral">{{ icon('info', 18) }}<span>Restez vigilant : aucun outil n'est fiable à 100 %. Ne saisissez pas d'informations sensibles si quelque chose vous semble inhabituel.</span></div>
+    {% endif %}
+  </div>
+</section>
+{% endif %}
+{% endblock %}

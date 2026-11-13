@@ -2,9 +2,16 @@ from urllib.parse import urlparse
 
 from flask_wtf import FlaskForm
 from wtforms import BooleanField, PasswordField, StringField, SubmitField
-from wtforms.validators import DataRequired, Email, EqualTo, Length, ValidationError
+from wtforms.validators import DataRequired, Email, EqualTo, Length, Regexp, ValidationError
 
 from .models import User
+
+
+def strong_password(form, field):
+    """Au moins une lettre et un chiffre (en plus des 8 caractères minimum)."""
+    value = field.data or ""
+    if not any(c.isalpha() for c in value) or not any(c.isdigit() for c in value):
+        raise ValidationError("Utilisez au moins une lettre et un chiffre.")
 
 
 class LoginForm(FlaskForm):
@@ -19,7 +26,7 @@ class RegisterForm(FlaskForm):
     email = StringField("Adresse e-mail", validators=[DataRequired(), Email(), Length(max=120)])
     password = PasswordField(
         "Mot de passe",
-        validators=[DataRequired(), Length(min=8, message="8 caractères minimum.")],
+        validators=[DataRequired(), Length(min=8, message="8 caractères minimum."), strong_password],
     )
     confirm = PasswordField(
         "Confirmer le mot de passe",
@@ -49,3 +56,29 @@ class AnalyzeForm(FlaskForm):
             host = None
         if not host or "." not in host:
             raise ValidationError("URL invalide (exemple : https://exemple.com).")
+
+
+class OTPForm(FlaskForm):
+    code = StringField(
+        "Code à 6 chiffres",
+        validators=[DataRequired(message="Saisissez le code."), Regexp(r"^\d{6}$", message="Le code contient 6 chiffres.")],
+    )
+    submit = SubmitField("Vérifier")
+
+
+class ChangePasswordForm(FlaskForm):
+    current = PasswordField("Mot de passe actuel", validators=[DataRequired()])
+    password = PasswordField(
+        "Nouveau mot de passe",
+        validators=[DataRequired(), Length(min=8, message="8 caractères minimum."), strong_password],
+    )
+    confirm = PasswordField(
+        "Confirmer le nouveau mot de passe",
+        validators=[DataRequired(), EqualTo("password", message="Les mots de passe ne correspondent pas.")],
+    )
+    submit = SubmitField("Changer le mot de passe")
+
+
+class ResetMFAForm(FlaskForm):
+    password = PasswordField("Mot de passe actuel", validators=[DataRequired()])
+    submit = SubmitField("Réinitialiser la double authentification")

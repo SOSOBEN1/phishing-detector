@@ -1,0 +1,32 @@
+{% extends "base_auth.html" %}
+{% from "_icons.html" import icon %}
+{% block title %}Double authentification{% endblock %}
+{% block form %}
+  {% if setup %}
+    <h2>Activer la double authentification</h2>
+    <p class="sub">Étape obligatoire pour protéger votre compte.</p>
+    <ol class="steps">
+      <li>Installez une application d'authentification (Google Authenticator, Microsoft Authenticator, FreeOTP…).</li>
+      <li>Scannez ce QR code avec l'application.</li>
+      <li>Saisissez le code à 6 chiffres affiché.</li>
+    </ol>
+    <img class="qr" src="{{ qr }}" alt="QR code à scanner avec l'application d'authentification">
+    <p class="secret" title="Clé à saisir manuellement si le scan ne fonctionne pas">{{ secret }}</p>
+  {% else %}
+    <h2>Vérification en deux étapes</h2>
+    <p class="sub">Saisissez le code à 6 chiffres de votre application d'authentification.</p>
+  {% endif %}
+
+  <form method="post" novalidate>
+    {{ form.hidden_tag() }}
+    <div class="field">
+      <span class="ico">{{ icon('lock', 16) }}</span>
+      {{ form.code(placeholder="123456", autocomplete="one-time-code", inputmode="numeric", maxlength="6", autofocus=true) }}
+    </div>
+    {% for e in form.code.errors %}<p class="err">{{ e }}</p>{% endfor %}
+    {{ form.submit(class="btn") }}
+  </form>
+
+  <div class="or"><span>Ou</span></div>
+  <a class="link center" href="{{ url_for('auth.login') }}">Retour à la connexion</a>
+{% endblock %}

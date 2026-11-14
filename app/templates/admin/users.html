@@ -1,0 +1,55 @@
+{% extends "base_app.html" %}
+{% block title %}Comptes{% endblock %}
+{% block header %}
+  <h1>Gestion des comptes</h1>
+  <p class="sub">Rôles, activation et double authentification des utilisateurs.</p>
+{% endblock %}
+
+{% macro action(u, name, label, cls="ghost", confirm=None) -%}
+<form method="post" action="{{ url_for('admin.user_action', user_id=u.id, action=name) }}" class="inline-form"{% if confirm %} data-confirm="{{ confirm }}"{% endif %}>
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <button type="submit" class="btn sm {{ cls }}">{{ label }}</button>
+</form>
+{%- endmacro %}
+
+{% block content %}
+<section class="card">
+  <div class="table-wrap">
+  <table class="table">
+    <thead><tr><th>Nom</th><th>E-mail</th><th>Rôle</th><th>MFA</th><th>Statut</th><th>Créé le</th><th>Actions</th></tr></thead>
+    <tbody>
+      {% for u in users %}
+      <tr>
+        <td>{{ u.name }}</td>
+        <td>{{ u.email }}</td>
+        <td>
+          {% if u.id == current_user.id %}{{ u.role }} <span class="muted">(vous)</span>
+          {% else %}
+          <form method="post" action="{{ url_for('admin.user_action', user_id=u.id, action='role') }}" class="inline-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <select name="role" class="select" aria-label="Rôle de {{ u.email }}">
+              {% for r in roles %}<option value="{{ r }}" {{ 'selected' if r == u.role }}>{{ r }}</option>{% endfor %}
+            </select>
+            <button type="submit" class="btn sm ghost">OK</button>
+          </form>
+          {% endif %}
+        </td>
+        <td>{% if u.mfa_enabled %}<span class="badge ok">Activée</span>{% else %}<span class="badge bad">Non</span>{% endif %}</td>
+        <td>{% if u.is_active %}<span class="badge ok">Actif</span>{% else %}<span class="badge bad">Désactivé</span>{% endif %}</td>
+        <td>{{ u.created_at|localdt('%d/%m/%Y') }}</td>
+        <td>
+          {% if u.id != current_user.id %}
+          <div class="actions">
+            {{ action(u, 'toggle', 'Désactiver' if u.is_active else 'Activer') }}
+            {% if u.mfa_enabled %}{{ action(u, 'reset-mfa', 'Réinit. MFA', confirm='Réinitialiser la MFA de ' ~ u.email ~ ' ?') }}{% endif %}
+            {{ action(u, 'delete', 'Supprimer', 'danger', 'Supprimer définitivement ' ~ u.email ~ ' et ses analyses ?') }}
+          </div>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  </div>
+</section>
+{% endblock %}

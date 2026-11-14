@@ -1,0 +1,10 @@
+{% extends "base_app.html" %}
+{% from "_icons.html" import icon %}
+{% block title %}Accès refusé{% endblock %}
+{% block header %}<h1>Accès refusé</h1>{% endblock %}
+{% block content %}
+<section class="card">
+  <div class="alert bad">{{ icon('shield-alert', 18) }}<span>Cette page est réservée aux administrateurs. La tentative a été enregistrée.</span></div>
+  <p><a class="link" href="{{ url_for('main.dashboard') }}">← Retour au tableau de bord</a></p>
+</section>
+{% endblock %}

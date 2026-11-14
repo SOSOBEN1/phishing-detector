@@ -23,7 +23,7 @@
     <div class="field">
       <span class="ico">{{ icon('lock', 16) }}</span>
       {{ form.password(placeholder="Mot de passe (8 caractères min.)", autocomplete="new-password", id="pwd") }}
-      <button type="button" class="eye" onclick="togglePwd('pwd', this)" aria-label="Afficher ou masquer le mot de passe">
+      <button type="button" class="eye" data-toggle-pwd="pwd" aria-label="Afficher ou masquer le mot de passe">
         <span class="on">{{ icon('eye', 16) }}</span><span class="off">{{ icon('eye-off', 16) }}</span>
       </button>
     </div>

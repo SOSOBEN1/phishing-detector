@@ -104,3 +104,7 @@ body {
   .auth-side { padding: 28px 20px; }
   .auth-main { padding: 32px 24px; }
 }
+/* ---------- Double authentification ---------- */
+.steps { margin: -10px 0 8px; padding-left: 18px; font-size: 13px; color: var(--muted); line-height: 1.5; }
+.qr { display: block; width: 170px; height: 170px; margin: 6px auto 8px; }
+.secret { margin: 0; padding: 8px; border-radius: 6px; background: #f3f4f6; font-family: ui-monospace, Consolas, monospace; font-size: 13px; text-align: center; word-break: break-all; }

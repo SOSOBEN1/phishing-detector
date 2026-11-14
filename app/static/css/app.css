@@ -186,3 +186,23 @@ body.app { display: flex; min-height: 100vh; }
   .analyze-bar { flex-direction: column; }
   .result-head { flex-wrap: wrap; }
 }
+/* ---------- Compte & administration ---------- */
+.nav-title { margin: 14px 12px 2px; font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: #8b90b8; }
+.grid-2.even { grid-template-columns: 1fr 1fr; }
+.info { display: grid; grid-template-columns: max-content 1fr; gap: 10px 24px; margin: 12px 0 0; font-size: 14px; }
+.info dt { color: var(--muted); }
+.info dd { margin: 0; font-weight: 600; }
+.form-stack { display: flex; flex-direction: column; gap: 6px; }
+.form-stack label { font-size: 13px; font-weight: 600; margin-top: 6px; }
+.btn.danger { background: var(--red); }
+.btn.danger:hover { background: #b91c1c; }
+.btn.ghost { background: #fff; color: var(--text); border: 1px solid var(--border); }
+.btn.ghost:hover { background: #f3f4f6; }
+.btn.sm { padding: 6px 10px; font-size: 12px; }
+.card .inline-form .btn, .card .filter .btn { width: auto; margin-top: 0; }
+.inline-form { display: inline-flex; align-items: center; gap: 6px; margin: 0; }
+.actions { display: flex; flex-wrap: wrap; gap: 6px; }
+.select { padding: 6px 8px; border: 1px solid var(--border); border-radius: 6px; font-size: 12px; font-family: inherit; background: #fff; }
+.filter { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.filter .muted { margin: 0; }
+@media (max-width: 860px) { .grid-2.even { grid-template-columns: 1fr; } }

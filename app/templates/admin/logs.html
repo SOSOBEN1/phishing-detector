@@ -1,0 +1,45 @@
+{% extends "base_app.html" %}
+{% block title %}Journaux de sécurité{% endblock %}
+{% block header %}
+  <h1>Journaux de sécurité</h1>
+  <p class="sub">Connexions, échecs, MFA et actions d'administration.</p>
+{% endblock %}
+
+{% block content %}
+{% set alerts = ('login_failed', 'login_blocked', 'mfa_failed', 'access_denied', 'rate_limited', 'password_change_failed', 'mfa_reset_failed') %}
+<section class="card">
+  <form method="get" class="filter">
+    <label for="event" class="muted">Filtrer par événement</label>
+    <select name="event" id="event" class="select">
+      <option value="">Tous</option>
+      {% for e in events %}<option value="{{ e }}" {{ 'selected' if e == event }}>{{ e }}</option>{% endfor %}
+    </select>
+    <button type="submit" class="btn sm ghost">Filtrer</button>
+  </form>
+  <div class="table-wrap">
+  <table class="table">
+    <thead><tr><th>Date</th><th>Événement</th><th>Compte</th><th>IP</th><th>Détails</th></tr></thead>
+    <tbody>
+      {% for l in pagination.items %}
+      <tr>
+        <td>{{ l.created_at|localdt('%d/%m/%Y %H:%M:%S') }}</td>
+        <td><span class="badge {{ 'bad' if l.event in alerts else 'ok' }}">{{ l.event }}</span></td>
+        <td>{{ l.email or '—' }}</td>
+        <td>{{ l.ip or '—' }}</td>
+        <td>{{ l.details or '' }}</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="5" class="empty">Aucun événement.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  </div>
+  {% if pagination.pages > 1 %}
+  <div class="pager">
+    {% if pagination.has_prev %}<a class="link" href="{{ url_for('admin.logs', page=pagination.prev_num, event=event or None) }}">← Précédent</a>{% else %}<span></span>{% endif %}
+    <span class="muted">Page {{ pagination.page }} / {{ pagination.pages }}</span>
+    {% if pagination.has_next %}<a class="link" href="{{ url_for('admin.logs', page=pagination.next_num, event=event or None) }}">Suivant →</a>{% else %}<span></span>{% endif %}
+  </div>
+  {% endif %}
+</section>
+{% endblock %}

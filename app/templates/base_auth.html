@@ -34,12 +34,6 @@
     </main>
   </div>
 
-  <script>
-    function togglePwd(id, btn) {
-      var el = document.getElementById(id);
-      el.type = el.type === "password" ? "text" : "password";
-      btn.classList.toggle("shown");
-    }
-  </script>
+  <script src="{{ url_for('static', filename='js/ui.js') }}"></script>
 </body>
 </html>

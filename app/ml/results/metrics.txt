@@ -1,0 +1,21 @@
+Modèle : régression logistique (13 features du domaine + n-grammes de caractères)
+Classe positive = phishing ; découpage 80/20 groupé par domaine
+
+Exactitude (accuracy) : 0.8725
+Précision             : 0.9139
+Rappel                : 0.7712
+F1-score              : 0.8365
+
+Matrice de confusion (lignes = réel, colonnes = prédit) :
+                 Légitime  Phishing
+  Légitime          25611      1441
+  Phishing           4537     15289
+
+              precision    recall  f1-score   support
+
+    Légitime     0.8495    0.9467    0.8955     27052
+    Phishing     0.9139    0.7712    0.8365     19826
+
+    accuracy                         0.8725     46878
+   macro avg     0.8817    0.8589    0.8660     46878
+weighted avg     0.8767    0.8725    0.8705     46878

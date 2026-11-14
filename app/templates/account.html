@@ -1,0 +1,52 @@
+{% extends "base_app.html" %}
+{% block title %}Paramètres{% endblock %}
+{% block header %}
+  <h1>Paramètres du compte</h1>
+  <p class="sub">Gérez vos informations et la sécurité de votre compte.</p>
+{% endblock %}
+
+{% block content %}
+<section class="card">
+  <h3>Mon compte</h3>
+  <dl class="info">
+    <dt>Nom</dt><dd>{{ current_user.name }}</dd>
+    <dt>Adresse e-mail</dt><dd>{{ current_user.email }}</dd>
+    <dt>Rôle</dt><dd>{{ 'Administrateur' if current_user.is_admin else 'Utilisateur' }}</dd>
+    <dt>Double authentification</dt>
+    <dd>{% if current_user.mfa_enabled %}<span class="badge ok">Activée</span>{% else %}<span class="badge bad">Désactivée</span>{% endif %}</dd>
+    <dt>Membre depuis</dt><dd>{{ current_user.created_at|localdt('%d/%m/%Y') }}</dd>
+  </dl>
+</section>
+
+<section class="grid-2 even">
+  <div class="card">
+    <h3>Changer le mot de passe</h3>
+    <p class="muted">8 caractères minimum, avec au moins une lettre et un chiffre.</p>
+    <form method="post" class="form-stack" novalidate>
+      {{ pwd_form.hidden_tag() }}
+      {{ pwd_form.current.label() }}
+      {{ pwd_form.current(class="input", autocomplete="current-password") }}
+      {% for e in pwd_form.current.errors %}<p class="err">{{ e }}</p>{% endfor %}
+      {{ pwd_form.password.label() }}
+      {{ pwd_form.password(class="input", autocomplete="new-password") }}
+      {% for e in pwd_form.password.errors %}<p class="err">{{ e }}</p>{% endfor %}
+      {{ pwd_form.confirm.label() }}
+      {{ pwd_form.confirm(class="input", autocomplete="new-password") }}
+      {% for e in pwd_form.confirm.errors %}<p class="err">{{ e }}</p>{% endfor %}
+      {{ pwd_form.submit(class="btn") }}
+    </form>
+  </div>
+
+  <div class="card">
+    <h3>Double authentification (MFA)</h3>
+    <p class="muted">Nouveau téléphone ? Réinitialisez la MFA : vous serez déconnecté(e) et scannerez un nouveau QR code à la prochaine connexion.</p>
+    <form method="post" class="form-stack" novalidate data-confirm="Réinitialiser la double authentification ?">
+      {{ mfa_form.hidden_tag() }}
+      {{ mfa_form.password.label() }}
+      {{ mfa_form.password(class="input", autocomplete="current-password") }}
+      {% for e in mfa_form.password.errors %}<p class="err">{{ e }}</p>{% endfor %}
+      {{ mfa_form.submit(class="btn danger") }}
+    </form>
+  </div>
+</section>
+{% endblock %}

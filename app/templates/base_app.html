@@ -17,9 +17,14 @@
       <a class="nav {{ 'active' if request.endpoint == 'main.dashboard' }}" href="{{ url_for('main.dashboard') }}">{{ icon('home') }} Tableau de bord</a>
       <a class="nav {{ 'active' if request.endpoint in ('main.analyze', 'main.analysis_detail') }}" href="{{ url_for('main.analyze') }}">{{ icon('search') }} Analyser une URL</a>
       <a class="nav {{ 'active' if request.endpoint == 'main.history' }}" href="{{ url_for('main.history') }}">{{ icon('list') }} Mes analyses</a>
+      {% if current_user.is_admin %}
+      <span class="nav-title">Administration</span>
+      <a class="nav {{ 'active' if request.endpoint == 'admin.users' }}" href="{{ url_for('admin.users') }}">{{ icon('user') }} Comptes</a>
+      <a class="nav {{ 'active' if request.endpoint == 'admin.logs' }}" href="{{ url_for('admin.logs') }}">{{ icon('shield-alert') }} Journaux de sécurité</a>
+      {% endif %}
     </nav>
     <div class="side-bottom">
-      <a class="nav" href="#" title="Bientôt disponible">{{ icon('settings') }} Paramètres</a>
+      <a class="nav {{ 'active' if request.endpoint == 'account.settings' }}" href="{{ url_for('account.settings') }}">{{ icon('settings') }} Paramètres</a>
       <form method="post" action="{{ url_for('auth.logout') }}">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <button type="submit" class="nav nav-btn">{{ icon('logout') }} Déconnexion</button>
@@ -44,5 +49,6 @@
 
     {% block content %}{% endblock %}
   </div>
+  <script src="{{ url_for('static', filename='js/ui.js') }}"></script>
 </body>
 </html>

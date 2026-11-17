@@ -1,0 +1,48 @@
+{% extends "base_app.html" %}
+{% from "_icons.html" import icon %}
+{% block title %}Modèle IA{% endblock %}
+{% block header %}
+  <h1>Modèle de détection</h1>
+  <p class="sub">Performances mesurées sur le jeu de test (lecture seule).</p>
+{% endblock %}
+
+{% macro pct(v) %}{{ ('%.2f'|format(v * 100)).replace('.', ',') }} %{% endmacro %}
+{% macro n(v) %}{{ '{:,}'.format(v).replace(',', ' ') }}{% endmacro %}
+
+{% block content %}
+{% if m %}
+<section class="stats four">
+  <div class="card stat"><div><strong>{{ pct(m.accuracy) }}</strong><small>Exactitude</small></div></div>
+  <div class="card stat"><div><strong>{{ pct(m.precision) }}</strong><small>Précision</small></div></div>
+  <div class="card stat"><div><strong>{{ pct(m.recall) }}</strong><small>Rappel</small></div></div>
+  <div class="card stat"><div><strong>{{ pct(m.f1) }}</strong><small>F1-score</small></div></div>
+</section>
+
+<section class="grid-2 even">
+  <div class="card">
+    <h3>Matrice de confusion</h3>
+    <table class="cm">
+      <thead><tr><th></th><th scope="col">Prédit légitime</th><th scope="col">Prédit phishing</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">Réel légitime</th><td class="cm-ok">{{ n(m.tn) }}</td><td class="cm-bad">{{ n(m.fp) }}</td></tr>
+        <tr><th scope="row">Réel phishing</th><td class="cm-bad">{{ n(m.fn) }}</td><td class="cm-ok">{{ n(m.tp) }}</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <h3>Modèle et données</h3>
+    <dl class="info">
+      <dt>Modèle</dt><dd>{{ m.title.replace('Modèle : ', '') }}</dd>
+      <dt>Découpage</dt><dd>{{ m.split }}</dd>
+      <dt>Jeu de test</dt><dd>{{ n(m.tn + m.fp + m.fn + m.tp) }} URL</dd>
+      {% if m.trained %}<dt>Entraîné le</dt><dd>{{ m.trained.strftime('%d/%m/%Y') }}</dd>{% endif %}
+    </dl>
+    <p class="muted">Pour réentraîner le modèle : <code>python app/ml/03_training.py</code></p>
+  </div>
+</section>
+{% else %}
+<section class="card">
+  <p class="empty">Aucun résultat d'entraînement. Lancez <code>python app/ml/03_training.py</code>.</p>
+</section>
+{% endif %}
+{% endblock %}

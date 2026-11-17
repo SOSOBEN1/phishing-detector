@@ -13,14 +13,18 @@
       {{ icon('shield-check', 30) }}
       SafeURL
     </div>
+    {% if current_user.is_admin %}<span class="role-tag">Administration</span>{% endif %}
     <nav>
+      {% if current_user.is_admin %}
+      <a class="nav {{ 'active' if request.endpoint == 'admin.dashboard' }}" href="{{ url_for('admin.dashboard') }}">{{ icon('home') }} Tableau de bord</a>
+      <a class="nav {{ 'active' if request.endpoint == 'admin.users' }}" href="{{ url_for('admin.users') }}">{{ icon('user') }} Comptes</a>
+      <a class="nav {{ 'active' if request.endpoint == 'admin.analyses' }}" href="{{ url_for('admin.analyses') }}">{{ icon('list') }} Toutes les analyses</a>
+      <a class="nav {{ 'active' if request.endpoint == 'admin.model' }}" href="{{ url_for('admin.model') }}">{{ icon('cpu') }} Modèle IA</a>
+      <a class="nav {{ 'active' if request.endpoint == 'admin.logs' }}" href="{{ url_for('admin.logs') }}">{{ icon('shield-alert') }} Journaux de sécurité</a>
+      {% else %}
       <a class="nav {{ 'active' if request.endpoint == 'main.dashboard' }}" href="{{ url_for('main.dashboard') }}">{{ icon('home') }} Tableau de bord</a>
       <a class="nav {{ 'active' if request.endpoint in ('main.analyze', 'main.analysis_detail') }}" href="{{ url_for('main.analyze') }}">{{ icon('search') }} Analyser une URL</a>
       <a class="nav {{ 'active' if request.endpoint == 'main.history' }}" href="{{ url_for('main.history') }}">{{ icon('list') }} Mes analyses</a>
-      {% if current_user.is_admin %}
-      <span class="nav-title">Administration</span>
-      <a class="nav {{ 'active' if request.endpoint == 'admin.users' }}" href="{{ url_for('admin.users') }}">{{ icon('user') }} Comptes</a>
-      <a class="nav {{ 'active' if request.endpoint == 'admin.logs' }}" href="{{ url_for('admin.logs') }}">{{ icon('shield-alert') }} Journaux de sécurité</a>
       {% endif %}
     </nav>
     <div class="side-bottom">

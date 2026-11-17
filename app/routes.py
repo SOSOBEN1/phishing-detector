@@ -32,6 +32,8 @@ def index():
 @bp.route("/dashboard")
 @login_required
 def dashboard():
+    if current_user.is_admin:
+        return redirect(url_for("admin.dashboard"))
     q = Analysis.query.filter_by(user_id=current_user.id)
     total = q.count()
     phishing = q.filter_by(label="Phishing").count()

@@ -1,0 +1,47 @@
+{% extends "base_app.html" %}
+{% block title %}Toutes les analyses{% endblock %}
+{% block header %}
+  <h1>Toutes les analyses</h1>
+  <p class="sub">Historique des analyses de tous les utilisateurs.</p>
+{% endblock %}
+
+{% block content %}
+<section class="card">
+  <form method="get" class="filter">
+    <label for="q" class="visually-hidden">Rechercher</label>
+    <input class="input" type="search" id="q" name="q" value="{{ q }}" placeholder="Rechercher une URL ou un utilisateur…">
+    <select name="result" class="select" aria-label="Résultat">
+      <option value="">Tous les résultats</option>
+      <option value="phishing" {{ 'selected' if result == 'phishing' }}>Phishing</option>
+      <option value="safe" {{ 'selected' if result == 'safe' }}>Sûre</option>
+    </select>
+    <button type="submit" class="btn sm ghost">Filtrer</button>
+    <a class="btn sm link-btn" href="{{ url_for('admin.analyses_csv', q=q or None, result=result or None) }}">Exporter CSV</a>
+  </form>
+  <div class="table-wrap">
+  <table class="table">
+    <thead><tr><th>URL</th><th>Utilisateur</th><th>Résultat</th><th>Score</th><th>Date</th></tr></thead>
+    <tbody>
+      {% for a in pagination.items %}
+      <tr>
+        <td class="url-cell" title="{{ a.url }}">{{ a.url }}</td>
+        <td>{{ a.user.name }}</td>
+        <td>{% if a.label == 'Phishing' %}<span class="badge bad">Phishing</span>{% else %}<span class="badge ok">Sûre</span>{% endif %}</td>
+        <td>{{ (a.probability * 100)|round|int }} %</td>
+        <td>{{ a.created_at|localdt }}</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="5" class="empty">Aucune analyse.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  </div>
+  {% if pagination.pages > 1 %}
+  <div class="pager">
+    {% if pagination.has_prev %}<a class="link" href="{{ url_for('admin.analyses', page=pagination.prev_num, q=q or None, result=result or None) }}">← Précédent</a>{% else %}<span></span>{% endif %}
+    <span class="muted">Page {{ pagination.page }} / {{ pagination.pages }}</span>
+    {% if pagination.has_next %}<a class="link" href="{{ url_for('admin.analyses', page=pagination.next_num, q=q or None, result=result or None) }}">Suivant →</a>{% else %}<span></span>{% endif %}
+  </div>
+  {% endif %}
+</section>
+{% endblock %}

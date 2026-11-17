@@ -1,0 +1,84 @@
+{% extends "base_app.html" %}
+{% from "_icons.html" import icon %}
+{% block title %}Tableau de bord administrateur{% endblock %}
+{% block header %}
+  <h1>Tableau de bord administrateur</h1>
+  <p class="sub">Vue d'ensemble de l'activité de SafeURL.</p>
+{% endblock %}
+
+{% block content %}
+<section class="stats four">
+  <div class="card stat">
+    <span class="ico ico-purple">{{ icon('user', 20) }}</span>
+    <div><strong>{{ users }}</strong><small>Utilisateurs ({{ mfa }} avec MFA)</small></div>
+  </div>
+  <div class="card stat">
+    <span class="ico ico-green">{{ icon('link', 20) }}</span>
+    <div><strong>{{ total }}</strong><small>Analyses totales</small></div>
+  </div>
+  <div class="card stat">
+    <span class="ico ico-red">{{ icon('alert', 20) }}</span>
+    <div><strong>{{ phishing }}</strong><small>URL phishing</small></div>
+  </div>
+  <div class="card stat">
+    <span class="ico ico-purple">{{ icon('cpu', 20) }}</span>
+    <div><strong>{{ ('%.2f'|format(accuracy * 100)).replace('.', ',') ~ ' %' if accuracy is not none else '—' }}</strong><small>Exactitude du modèle</small></div>
+  </div>
+</section>
+
+<section class="grid-2">
+  <div class="card">
+    <h3>Analyses des 7 derniers jours</h3>
+    <svg class="chart" viewBox="0 0 350 160" role="img" aria-label="Nombre d'analyses par jour sur les 7 derniers jours">
+      {% for label, n in days %}
+        {% set h = (n / peak * 100)|round|int %}
+        {% set x = loop.index0 * 50 + 8 %}
+        <rect class="c-bar" x="{{ x }}" y="{{ 120 - h }}" width="34" height="{{ h }}" rx="4"/>
+        <text class="chart-t" x="{{ x + 17 }}" y="{{ 114 - h }}" text-anchor="middle">{{ n }}</text>
+        <text class="chart-t" x="{{ x + 17 }}" y="142" text-anchor="middle">{{ label }}</text>
+      {% endfor %}
+    </svg>
+  </div>
+  <div class="card">
+    <h3>Répartition</h3>
+    {% if total %}
+    <div class="donut-wrap">
+      <svg class="donut" viewBox="0 0 36 36" role="img" aria-label="{{ pct }} % de phishing, {{ 100 - pct }} % d'URL sûres">
+        <circle class="d-safe" cx="18" cy="18" r="15.9155" fill="none" stroke-width="4"/>
+        {% if pct %}<circle class="d-bad" cx="18" cy="18" r="15.9155" fill="none" stroke-width="4" stroke-dasharray="{{ pct }} {{ 100 - pct }}" stroke-dashoffset="25"/>{% endif %}
+      </svg>
+      <ul class="legend">
+        <li><i class="l-bad"></i>Phishing {{ pct }} %</li>
+        <li><i class="l-safe"></i>Sûr {{ 100 - pct }} %</li>
+      </ul>
+    </div>
+    {% else %}
+    <p class="muted">Aucune analyse pour le moment.</p>
+    {% endif %}
+  </div>
+</section>
+
+<section class="card">
+  <div class="card-head">
+    <h3>Alertes récentes</h3>
+    <a class="link" href="{{ url_for('admin.analyses', result='phishing') }}">Voir tout →</a>
+  </div>
+  <div class="table-wrap">
+  <table class="table">
+    <thead><tr><th>URL</th><th>Utilisateur</th><th>Score</th><th>Date</th></tr></thead>
+    <tbody>
+      {% for a in recent %}
+      <tr>
+        <td class="url-cell" title="{{ a.url }}">{{ a.url }}</td>
+        <td>{{ a.user.name }}</td>
+        <td>{{ (a.probability * 100)|round|int }} %</td>
+        <td>{{ a.created_at|localdt }}</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="4" class="empty">Aucune alerte.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  </div>
+</section>
+{% endblock %}

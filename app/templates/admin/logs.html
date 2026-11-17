@@ -9,7 +9,9 @@
 {% set alerts = ('login_failed', 'login_blocked', 'mfa_failed', 'access_denied', 'rate_limited', 'password_change_failed', 'mfa_reset_failed') %}
 <section class="card">
   <form method="get" class="filter">
-    <label for="event" class="muted">Filtrer par événement</label>
+    <label for="q" class="visually-hidden">Rechercher</label>
+    <input class="input" type="search" id="q" name="q" value="{{ q }}" placeholder="Rechercher un compte, une IP ou un détail…">
+    <label for="event" class="muted">Événement</label>
     <select name="event" id="event" class="select">
       <option value="">Tous</option>
       {% for e in events %}<option value="{{ e }}" {{ 'selected' if e == event }}>{{ e }}</option>{% endfor %}
@@ -36,9 +38,9 @@
   </div>
   {% if pagination.pages > 1 %}
   <div class="pager">
-    {% if pagination.has_prev %}<a class="link" href="{{ url_for('admin.logs', page=pagination.prev_num, event=event or None) }}">← Précédent</a>{% else %}<span></span>{% endif %}
+    {% if pagination.has_prev %}<a class="link" href="{{ url_for('admin.logs', page=pagination.prev_num, event=event or None, q=q or None) }}">← Précédent</a>{% else %}<span></span>{% endif %}
     <span class="muted">Page {{ pagination.page }} / {{ pagination.pages }}</span>
-    {% if pagination.has_next %}<a class="link" href="{{ url_for('admin.logs', page=pagination.next_num, event=event or None) }}">Suivant →</a>{% else %}<span></span>{% endif %}
+    {% if pagination.has_next %}<a class="link" href="{{ url_for('admin.logs', page=pagination.next_num, event=event or None, q=q or None) }}">Suivant →</a>{% else %}<span></span>{% endif %}
   </div>
   {% endif %}
 </section>

@@ -27,9 +27,14 @@ body.app { display: flex; min-height: 100vh; }
   flex-shrink: 0;
   background: linear-gradient(180deg, var(--navy), var(--navy-2));
   color: #fff;
-  padding: 22px 14px;
+ padding: 22px 14px;
   display: flex;
   flex-direction: column;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  align-self: flex-start;
+  overflow-y: auto;
 }
 .logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 20px; padding: 0 8px 24px; }
 .logo .icon { color: #818cf8; }
@@ -176,7 +181,8 @@ body.app { display: flex; min-height: 100vh; }
 /* ---------- Mobile ---------- */
 @media (max-width: 860px) {
   body.app { flex-direction: column; }
-  .sidebar { width: 100%; flex-direction: row; flex-wrap: wrap; align-items: center; padding: 12px; gap: 8px; }
+ /* new_str */
+  .sidebar { width: 100%; flex-direction: row; flex-wrap: wrap; align-items: center; padding: 12px; gap: 8px; position: static; height: auto; overflow-y: visible; }
   .logo { padding: 0 8px 0 0; }
   .sidebar nav { flex-direction: row; flex-wrap: wrap; }
   .side-bottom { margin-top: 0; margin-left: auto; flex-direction: row; }

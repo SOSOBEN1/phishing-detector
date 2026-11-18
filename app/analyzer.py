@@ -1,6 +1,23 @@
 """Pont entre l'appli Flask et le modèle IA (app/ml)."""
 from .ml.features import extract_features, get_domain
 from .ml.predict import predict_url
+# new_str (à ajouter après les imports existants)
+import socket
+from urllib.parse import urlparse
+
+
+def domain_exists(url: str) -> bool:
+    host = urlparse(url if "//" in url else "//" + url).hostname
+    if not host:
+        return False
+    socket.setdefaulttimeout(3)
+    try:
+        socket.gethostbyname(host)
+        return True
+    except socket.gaierror:
+        return False
+    except OSError:
+        return True  # pas de réseau / timeout : on n'affirme rien
 TRUSTED = {
     # Grands services
     "google.com", "youtube.com", "gmail.com", "amazon.com", "facebook.com",
@@ -50,4 +67,6 @@ def explain(url: str) -> list:
         reasons.append("Nombre élevé de sous-domaines")
     if "@" in url:
         reasons.append("Présence du symbole @ dans l'URL")
+    if not domain_exists(url):
+        reasons.append("Le nom de domaine n'existe pas (aucune résolution DNS)")
     return reasons
